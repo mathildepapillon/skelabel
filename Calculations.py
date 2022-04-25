@@ -80,18 +80,18 @@ def load_mariel_raw(pattern="data/mariel_*.npy"):
     low, hi = np.quantile(ds_all, [0.01, 0.99], axis=(0, 1))
     return ds_all, ds_all_centered, datasets, datasets_centered, ds_counts
 
-def get_and_sequify_data(chosen_seq_len_):
+def get_seq_data(chosen_seq_len_):
     print(chosen_seq_len_)
     #chosen_seq_len = int(chosen_seq_len)
     ds, ds_c, _, _, _ = load_mariel_raw()
     print('loaded data')
     my_data = ds_c
-    print('made my_data. has shape: {}'.format(my_data.shape))
     seq_data = np.zeros(
         (my_data.shape[0] - chosen_seq_len_, chosen_seq_len_, my_data.shape[1], my_data.shape[2])
     )
     for i in range((my_data.shape[0] - chosen_seq_len_)):
         seq_data[i] = my_data[i : i + chosen_seq_len_]
+    print('sequified data')
     return seq_data
 
 # these are the ordered label names of the 53 vertices
@@ -336,9 +336,8 @@ def make_dream_z(xline):
         
     return all_x
 
-def make_dreams(chosen_seq_len_, which_seq_):
-    seq_data = get_and_sequify_data(chosen_seq_len_)
-    dance_to_plot = seq_data[which_seq_]
+def make_dreams(seq_data, which_seq):
+    dance_to_plot = seq_data[which_seq]
     xline = get_line_segments(dance_to_plot)
     dream_x = make_dream_x(xline)
     dream_y = make_dream_y(xline)

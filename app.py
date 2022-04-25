@@ -3,11 +3,13 @@ from dash import dcc
 import dash_bootstrap_components as dbc
 from dash import html
 from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 
 from __main__ import *
 import Calculations
 import Controls
 import Callbacks
+import pandas as pd
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -21,12 +23,11 @@ app.layout = dbc.Container(
         html.Hr(),
 
         dbc.Row([
-            dbc.Col(Controls.Card, md=4),
-            dbc.Col(dcc.Graph(id="OneDanceGraph",style={'width': '140vh', 'height': '120vh'}), md=20),
+            dbc.Col(Controls.Card, md=3),
+            dbc.Col(dcc.Graph(id="OneDanceGraph",style={'width': '140vh', 'height': '120vh'}), md=8),
         ], align="center",),
-        html.Hr(),
-        html.Button('Submit', id='button'),
-        html.H3(id='button-clicks'),
+        
+        #dcc.Store(id='seq_dataj', storage_type='local')
     ],
     fluid=True,
 )
@@ -56,14 +57,76 @@ app.layout = dbc.Container(
 @app.callback(
     Output('OneDanceGraph', 'figure'),
     [Input('chosen_seq_len', 'value'),
-     Input('which_seq', 'value'),
-     ], prevent_initial_call=True)
+    Input('which_seq', 'value'),
+    Input('button', 'n_clicks')
+    ])
 
-def update_output(chosen_seq_len, which_seq):
+def get_figure(chosen_seq_len, which_seq, n_clicks):
+    if n_clicks is None:
+        # prevent the None callbacks is important with the store component.
+        # you don't want to update the store for nothing.
+        raise PreventUpdate
 
-    fig = Callbacks.fig(chosen_seq_len, which_seq)
+    if n_clicks is not None:
+        seq_data = Calculations.get_seq_data(chosen_seq_len)
 
-    return fig
+        if n_clicks==1:
+            OneDanceGraph = Callbacks.fig(seq_data, which_seq)
+        if n_clicks > 1:
+            next_which_seq = which_seq + n_clicks*chosen_seq_len    
+            OneDanceGraph = Callbacks.fig(seq_data, next_which_seq)
+
+    return OneDanceGraph
+
+# @app.callback(
+#     Output('OneDanceGraph', 'figure'),
+#     [Input('chosen_seq_len', 'value'),
+#     Input('which_seq', 'value'),
+#     Input('button_next', 'n_clicks'),
+#     ])
+
+# def update_which_seq(chosen_seq_len, which_seq, n_clicks):
+#     if n_clicks is None:
+#         # prevent the None callbacks is important with the store component.
+#         # you don't want to update the store for nothing.
+#         raise PreventUpdate
+
+#     if n_clicks is not None:
+#         next_which_seq = which_seq + n_clicks*chosen_seq_len
+#         seq_data = Calculations.get_seq_data(chosen_seq_len)
+#         OneDanceGraph = Callbacks.fig(seq_data, next_which_seq)
+
+#     #seq_dataj = (seq_data.tolist()).to_json(date_format='iso', orient='split')
+
+#     return OneDanceGraph
+
+
+
+
+
+
+# @app.callback(
+#     Output('OneDanceGraph', 'figure'),
+#     [Input('seq_dataj', 'data'),
+#      Input('which_seq', 'value'),
+#      Input('button2', 'n_clicks')
+#      ])
+
+# def update_graph(seq_dataj, which_seq, n_clicks):
+
+    
+#     if n_clicks is None:
+#         # prevent the None callbacks is important with the store component.
+#         # you don't want to update the store for nothing.
+#         raise PreventUpdate
+
+#     if n_clicks is not None:
+#         print('gonna get seq_data')
+#         seq_data = pd.read_json(seq_dataj, orient='split')
+#         print('got it')
+#         OneDanceGraph = Callbacks.fig(seq_data, which_seq)
+
+#     return OneDanceGraph
 
 
 #############################################################################

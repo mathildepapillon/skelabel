@@ -1,7 +1,8 @@
 import plotly.graph_objects as go
 import Calculations
+import dash
 
-# def when_button_clicked(seq_data, which_seq, button):
+# def when_click_get_seq_data(chosen_seq_len, button):
 
 #    #This array registers the ids of clicked buttons
 #    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
@@ -9,20 +10,17 @@ import Calculations
 #    if 'button' in changed_id: #equivalent of saying "if button is clicked:"
 
 #       #Perform task to make figure, as defined in Calculations.py
-#       return_msg_env = Calculations.SetUpEnv(type_of_run, base_name, button_env, hx_min,hx_max,delta_hx,htip,a,qdrad,trad,cone_angle,  dielectric_thic,rad_container,background_mesh,semi_important_mesh,important_mesh,xpoint,ypoint,zpoint,tol,qd_eps,material_eps,vb, T, noise, Ecb, Els, x_size_of_image, y_size_of_image)
+#       seq_data = Calculations.get_seq_data(chosen_seq_len)
 
-#       #return_msg_env will indicate that the directory was successfully made
-#       #this message is the Output in the callback  when the task is completed
-#       #the callback will print it in the App (as indicated in controls defined in Content.py)
 #    else:
-#       return_msg_env = ' '
+#        seq_data = Calculations.get_seq_data(chosen_seq_len)
 
-#    return return_msg_env
+#    return seq_data
 
-def fig(chosen_seq_len, which_seq):
-
-    dream_x, dream_y, dream_z = Calculations.make_dreams(chosen_seq_len, which_seq)
-
+def fig(seq_data, which_seq):
+    print('Getting x y z for figure')
+    dream_x, dream_y, dream_z = Calculations.make_dreams(seq_data, which_seq)
+    print('Making figure')
     # Create figure
     fig = go.Figure(go.Scatter3d(x=[], y=[], z=[],
                                     mode='lines', 
@@ -32,7 +30,7 @@ def fig(chosen_seq_len, which_seq):
                     )  
 
     # Frames
-    a=2
+    a=1.7
     frames = [go.Frame(data= [go.Scatter3d(x=a*dream_x[k+1],
                                         y=a*dream_y[k+1],
                                         z=a*dream_z[k+1],)
@@ -88,10 +86,10 @@ def fig(chosen_seq_len, which_seq):
                     }],
                         
                     "direction": "left",
-                    "pad": {"r": 10, "t": 70},
+                    "pad": {"r": 70, "t": 70},
                     "type": "buttons",
                     "x": 0.1,
-                    "y": 0,
+                    "y": 0.5,
                 }
             ],
             sliders=sliders
