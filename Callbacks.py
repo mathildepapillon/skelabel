@@ -2,21 +2,6 @@ import plotly.graph_objects as go
 import Calculations
 import dash
 
-# def when_click_get_seq_data(chosen_seq_len, button):
-
-#    #This array registers the ids of clicked buttons
-#    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
-   
-#    if 'button' in changed_id: #equivalent of saying "if button is clicked:"
-
-#       #Perform task to make figure, as defined in Calculations.py
-#       seq_data = Calculations.get_seq_data(chosen_seq_len)
-
-#    else:
-#        seq_data = Calculations.get_seq_data(chosen_seq_len)
-
-#    return seq_data
-
 def fig(seq_data, which_seq):
     print('Getting x y z for figure')
     dream_x, dream_y, dream_z = Calculations.make_dreams(seq_data, which_seq)
