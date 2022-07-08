@@ -1,3 +1,4 @@
+from random import shuffle
 import numpy as np
 import plotly.graph_objects as go
 import plotly
@@ -92,6 +93,13 @@ def get_seq_data(chosen_seq_len_):
     for i in range((my_data.shape[0] - chosen_seq_len_)):
         seq_data[i] = my_data[i : i + chosen_seq_len_]
     print('sequified data')
+    return seq_data
+from io import StringIO
+
+def get_seq_data_generated():
+    #file = open('shuffled_seq.csv')
+    seq_data = np.load('shuffled_neighb_VALID.npy')
+    seq_data = np.array(seq_data)
     return seq_data
 
 # these are the ordered label names of the 53 vertices
